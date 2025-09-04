@@ -6,14 +6,33 @@ export default function Profile() {
   const { user } = useAuth();
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    username: user?.username || '',
+    email: user?.email || ''
+  });
 
   const showToast = (message: string, type: 'success' | 'info' | 'error') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleUpdateProfile = () => {
+    // In a real app, you would make an API call here
     showToast('Profile update functionality will be available soon!', 'info');
+    setIsEditing(false);
+    // Reset form data to current user data
+    setFormData({
+      username: user?.username || '',
+      email: user?.email || ''
+    });
   };
 
   if (!user) return null;
@@ -73,11 +92,31 @@ export default function Profile() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-3 border-b border-gray-200">
                   <span className="text-gray-600">Username</span>
-                  <span className="font-medium text-gray-900">{user.username}</span>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      className="border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                    />
+                  ) : (
+                    <span className="font-medium text-gray-900">{user.username}</span>
+                  )}
                 </div>
                 <div className="flex justify-between items-center py-3 border-b border-gray-200">
                   <span className="text-gray-600">Email</span>
-                  <span className="font-medium text-gray-900">{user.email}</span>
+                  {isEditing ? (
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                    />
+                  ) : (
+                    <span className="font-medium text-gray-900">{user.email}</span>
+                  )}
                 </div>
                 <div className="flex justify-between items-center py-3 border-b border-gray-200">
                   <span className="text-gray-600">Member since</span>
@@ -98,12 +137,35 @@ export default function Profile() {
                 Account Actions
               </h2>
               <div className="space-y-4">
-                <button
-                  onClick={handleUpdateProfile}
-                  className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                >
-                  Update Profile
-                </button>
+                {isEditing ? (
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleUpdateProfile}
+                      className="flex-1 flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsEditing(false);
+                        setFormData({
+                          username: user?.username || '',
+                          email: user?.email || ''
+                        });
+                      }}
+                      className="flex-1 flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                  >
+                    Edit Profile
+                  </button>
+                )}
                 <button
                   onClick={() => showToast('Password change functionality coming soon!', 'info')}
                   className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"

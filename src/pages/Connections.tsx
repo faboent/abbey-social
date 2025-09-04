@@ -86,9 +86,14 @@ export default function Connections() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-3">
-          {/* Stats Card */}
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-3">
+            {/* Stats Card */}
           <div className="bg-white rounded-lg shadow mb-6">
             <div className="p-6">
               <div className="flex justify-around items-center">
@@ -229,6 +234,7 @@ export default function Connections() {
           </div>
         </div>
       </div>
+      )}
     </Layout>
   );
 }
